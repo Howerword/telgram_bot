@@ -50,7 +50,7 @@ const startReminder = async (userId, ctx) => {
 
     const job = schedule.scheduleJob(`0 ${reminderTime} * * * *`, () => {
         const motivation = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-        ctx.telegram.sendMessage(userId, '🔔 Час зробити перенесення! ${motivation}');
+        ctx.telegram.sendMessage(userId, `🔔 Час зробити перенесення! ${motivation}`);
     });
 
     userSchedules.set(userId, job);
