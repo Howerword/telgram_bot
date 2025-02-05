@@ -102,6 +102,16 @@ bot.hears('⏹ Зупинити нагадування', (ctx) => {
     }
 });
 
+// Вихід з бота та зупинка нагадувань
+bot.hears('🚪 Вийти', (ctx) => {
+    const userId = ctx.from.id;
+    if (userSchedules.has(userId)) {
+        userSchedules.get(userId).cancel();
+        userSchedules.delete(userId);
+    }
+    ctx.reply('👋 Вихід виконано. Нагадування зупинені.');
+});
+
 // Запускаємо бота
 bot.launch();
 console.log('Бот запущено!');
