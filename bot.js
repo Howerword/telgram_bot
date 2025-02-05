@@ -41,7 +41,7 @@ bot.start(async (ctx) => {
     const userId = ctx.from.id;
     try {
         const savedTime = await db.getReminderTime(userId); // Отримуємо збережений час
-        let message = 'Привіт! Це тестові кнопки:';
+        let message = 'Привіт! Я твій асистент:';
         if (savedTime) {
             message += `\n🔔 Ваш встановлений час нагадувань: ${savedTime} хв`;
         }
