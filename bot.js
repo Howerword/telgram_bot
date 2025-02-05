@@ -1,4 +1,4 @@
-rrequire('dotenv').config(); // Підключаємо змінні середовища
+require('dotenv').config(); // Підключаємо змінні середовища
 const { Telegraf, Markup } = require('telegraf'); // Імпортуємо Telegraf
 
 const bot = new Telegraf(process.env.BOT_TOKEN); // Ініціалізуємо бота
