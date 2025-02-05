@@ -20,6 +20,22 @@ const reminderMenu = Markup.inlineKeyboard(
     { columns: 2 }
 );
 
+// Функція запуску нагадувань
+const startReminder = async (userId, ctx) => {
+    const reminderTime = await db.getReminderTime(userId);
+    if (!reminderTime) return;
+
+    if (userSchedules.has(userId)) {
+        userSchedules.get(userId).cancel(); // Вимикаємо старе нагадування
+    }
+
+    const job = schedule.scheduleJob(`0 ${reminderTime} * * * *`, () => {
+        ctx.telegram.sendMessage(userId, '🔔 Час зробити перенесення!');
+    });
+
+    userSchedules.set(userId, job);
+};
+
 // Обробник команди /start
 bot.start(async (ctx) => {
     const userId = ctx.from.id;
@@ -48,6 +64,7 @@ bot.action(/^set_reminder_\d+$/, async (ctx) => {
     try {
         await db.setReminderTime(userId, selectedTime); // Збереження у базі
         ctx.reply(`✅ Нагадування встановлено на ${selectedTime} хвилин після кожної години.`);
+        await startReminder(userId, ctx); // Автоматично перезапускаємо нагадування
     } catch (err) {
         console.error('Помилка збереження часу нагадувань:', err);
         ctx.reply('❌ Помилка встановлення нагадування. Спробуйте ще раз.');
@@ -69,19 +86,7 @@ bot.hears('📋 Переглянути нагадування', async (ctx) => {
 // Початок нагадувань
 bot.hears('▶️ Почати нагадування', async (ctx) => {
     const userId = ctx.from.id;
-    const reminderTime = await db.getReminderTime(userId);
-    if (!reminderTime) return ctx.reply('❌ Ти ще не налаштував нагадування.');
-
-    if (userSchedules.has(userId)) {
-        return ctx.reply('🔄 Нагадування вже запущено.');
-    }
-
-    // Запускаємо нагадування кожну годину у вибраний користувачем час
-    const job = schedule.scheduleJob(`0 ${reminderTime} * * * *`, () => {
-        ctx.telegram.sendMessage(userId, '🔔 Час зробити перенесення!');
-    });
-
-    userSchedules.set(userId, job); // Зберігаємо активне нагадування у мапі
+    await startReminder(userId, ctx);
     ctx.reply('▶️ Нагадування увімкнено.');
 });
 
