@@ -3,7 +3,8 @@ const { Telegraf, Markup } = require('telegraf'); // Імпортуємо Telegr
 const schedule = require('node-schedule'); // Підключаємо планувальник задач
 const db = require('./database'); // Підключаємо базу даних
 
-const bot = new Telegraf(process.env.BOT_TOKEN); // Ініціалізуємо бота
+const BOT_TOKEN = process.env.BOT_TOKEN_TEST || process.env.BOT_TOKEN;
+const bot = new Telegraf(BOT_TOKEN); // Ініціалізуємо бота
 const userSchedules = new Map(); // Карта для збереження запущених нагадувань користувачів
 
 // Мотиваційні повідомлення
