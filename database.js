@@ -18,6 +18,15 @@ db.run(`
     )
 `);
 
+// Створюємо таблицю для нагадувань про монітори (якщо її ще немає)
+db.run(`
+    CREATE TABLE IF NOT EXISTS monitor_reminders (
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER UNIQUE,
+        monitor_time INTEGER
+    )
+`);
+
 // Функція для збереження часу нагадування
 const setReminderTime = (userId, time) => {
     return new Promise((resolve, reject) => {
@@ -43,4 +52,29 @@ const getReminderTime = (userId) => {
     });
 };
 
-module.exports = { setReminderTime, getReminderTime };
+// Функція для збереження часу нагадування для моніторів
+const setMonitorReminderTime = (userId, time) => {
+    return new Promise((resolve, reject) => {
+        db.run(
+            `INSERT INTO monitor_reminders (user_id, monitor_time) VALUES (?, ?)
+             ON CONFLICT(user_id) DO UPDATE SET monitor_time = ?`,
+            [userId, time, time],
+            function (err) {
+                if (err) reject(err);
+                else resolve();
+            }
+        );
+    });
+};
+
+// Функція для отримання часу нагадувань для моніторів
+const getMonitorReminderTime = (userId) => {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT monitor_time FROM monitor_reminders WHERE user_id = ?`, [userId], (err, row) => {
+            if (err) reject(err);
+            else resolve(row ? row.monitor_time : null);
+        });
+    });
+};
+
+module.exports = { setReminderTime, getReminderTime, setMonitorReminderTime, getMonitorReminderTime };

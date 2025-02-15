@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Howerword/telgram_bot#readme",
   "description": "",
   "dependencies": {
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "node-schedule": "^2.1.1",
     "sqlite3": "^5.1.7",
